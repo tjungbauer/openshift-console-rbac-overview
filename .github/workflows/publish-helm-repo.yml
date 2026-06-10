@@ -10,6 +10,7 @@ on:
       - '.github/workflows/publish-helm-repo.yml'
   workflow_dispatch:
 
+    
 permissions:
   contents: read
   pages: write
