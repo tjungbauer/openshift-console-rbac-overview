@@ -10,7 +10,9 @@ From the repository root:
 ./scripts/package-helm-repo.sh
 ```
 
-Serve this directory at `https://tjungbauer.github.io/openshift-console-rbac-overview` (GitHub Pages from `/helm-repo` or a `gh-pages` branch).
+Serve this directory at `https://tjungbauer.github.io/openshift-console-rbac-overview`.
+
+GitHub Pages is published by `.github/workflows/publish-helm-repo.yml` on push to `main`. In the repository settings, set **Pages → Build and deployment → Source** to **GitHub Actions** (one-time setup).
 
 ## Consume
 

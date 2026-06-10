@@ -1,0 +1,46 @@
+name: Publish Helm repository
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'chart/rbac-overview/**'
+      - 'helm-repo/**'
+      - 'scripts/package-helm-repo.sh'
+      - '.github/workflows/publish-helm-repo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: helm-repo-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.17.1
+
+      - name: Package chart and refresh index
+        run: ./scripts/package-helm-repo.sh
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: helm-repo
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
