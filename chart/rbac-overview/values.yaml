@@ -1,0 +1,91 @@
+# -- Let the chart render a Namespace resource. Keep false when using `helm --create-namespace`
+# (using both causes Helm 4 SSA error: "original object Namespace ... not found").
+namespace:
+  create: false
+  # -- Namespace for the plugin workload and ConsolePlugin backend.
+  name: rbac-overview
+
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  # -- Plugin container image repository.
+  repository: quay.io/tjungbau/openshift-console-rbac-overview
+  # -- Image tag (defaults to chart appVersion).
+  tag: ""
+  pullPolicy: Always
+
+replicaCount: 1
+
+consolePlugin:
+  # -- ConsolePlugin resource name (must match plugin manifest).
+  name: rbac-overview
+  # -- Display name in the OpenShift console.
+  displayName: RBAC Overview
+  # -- i18n load type for the plugin.
+  i18nLoadType: Preload
+
+pluginConfig:
+  # -- ClusterRole names treated as sensitive in the Cluster admins tab.
+  sensitiveRoles:
+    - cluster-admin
+    - admin
+  # -- Label key on ClusterRoles marked as elevated.
+  sensitiveRoleLabelKey: rbac-overview.io/elevated
+  # -- Label value on ClusterRoles marked as elevated.
+  sensitiveRoleLabelValue: "true"
+  # -- SCC names hidden from the Direct tab (system defaults). Set [] to show all.
+  hiddenSccNames:
+    - anyuid
+    - privileged
+    - hostaccess
+    - hostmount-anyuid
+    - hostnetwork
+    - node-exporter
+
+service:
+  # -- Service port exposed to the console operator.
+  port: 9443
+  # -- OpenShift serving cert annotation secret name for TLS.
+  servingCertSecretName: rbac-overview-cert
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    memory: 128Mi
+
+probes:
+  startup:
+    # Serving cert injection + first nginx start can take longer on upgrade
+    failureThreshold: 30
+    periodSeconds: 5
+  readiness:
+    path: /plugin-manifest.json
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  liveness:
+    path: /plugin-manifest.json
+    initialDelaySeconds: 15
+    periodSeconds: 20
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+# -- Append the plugin to console.operator cluster spec.plugins after install.
+enableConsolePlugin:
+  enabled: true
+  # -- Namespace for the enable-plugin Job and its ServiceAccount.
+  jobNamespace: rbac-overview
+  # -- CLI image for patching console.operator.
+  cliImage: registry.redhat.io/openshift4/ose-cli:latest
+  ttlSecondsAfterFinished: 600

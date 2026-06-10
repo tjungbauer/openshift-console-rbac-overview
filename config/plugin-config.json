@@ -1,0 +1,6 @@
+{
+  "sensitiveRoles": ["cluster-admin", "admin"],
+  "sensitiveRoleLabelKey": "rbac-overview.io/elevated",
+  "sensitiveRoleLabelValue": "true",
+  "hiddenSccNames": ["anyuid", "privileged", "hostaccess", "hostmount-anyuid", "hostnetwork", "node-exporter"]
+}

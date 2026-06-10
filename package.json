@@ -1,0 +1,67 @@
+{
+  "name": "openshift-console-rbac-overview",
+  "version": "1.0.5",
+  "description": "OpenShift Console plugin for RBAC permissions overview",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && NODE_ENV=production npm run webpack",
+    "build-dev": "npm run clean && npm run webpack",
+    "start": "npm run webpack -- serve --progress",
+    "start-console": "./start-console.sh",
+    "webpack": "node -r ts-node/register ./node_modules/.bin/webpack",
+    "lint": "tsc --noEmit && eslint src",
+    "test": "node --require ts-node/register --test src/components/rbac-overview/__tests__/*.test.ts",
+    "i18n:check": "node scripts/check-i18n-keys.mjs",
+    "helm:lint": "helm lint chart/rbac-overview",
+    "helm:package-repo": "./scripts/package-helm-repo.sh",
+    "helm:template": "helm template test chart/rbac-overview",
+    "build-install": "./scripts/build-install.sh",
+    "deploy": "./scripts/build-install.sh",
+    "helm-upgrade": "./scripts/helm-upgrade.sh",
+    "verify-deployment": "./scripts/verify-deployment.sh",
+    "adopt-helm": "./scripts/adopt-helm.sh"
+  },
+  "devDependencies": {
+    "@openshift-console/dynamic-plugin-sdk": "4.21-latest",
+    "@openshift-console/dynamic-plugin-sdk-webpack": "4.21-latest",
+    "@patternfly/react-core": "^6.2.2",
+    "@patternfly/react-icons": "^6.2.2",
+    "@patternfly/react-table": "^6.2.2",
+    "@types/node": "^22.0.0",
+    "@types/react": "^17.0.37",
+    "@types/react-router-dom": "^5.3.3",
+    "copy-webpack-plugin": "^14.0.0",
+    "css-loader": "^7.1.4",
+    "eslint": "^9.39.1",
+    "@eslint/js": "^9.39.1",
+    "typescript-eslint": "^8.48.0",
+    "i18next": "^23.11.5",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-i18next": "^11.7.3",
+    "react-router": "5.3.x",
+    "react-router-dom": "5.3.x",
+    "react-router-dom-v5-compat": "^6.11.2",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "webpack": "^5.100.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.3"
+  },
+  "consolePlugin": {
+    "name": "rbac-overview",
+    "version": "1.0.5",
+    "displayName": "RBAC Overview",
+    "description": "Overview of users, groups, service accounts, and their permissions",
+    "exposedModules": {
+      "RbacOverviewPage": "./components/RbacOverviewPage"
+    },
+    "dependencies": {
+      "@console/pluginAPI": "*"
+    }
+  }
+}

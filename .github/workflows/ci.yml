@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint          # tsc --noEmit + eslint
+      - run: npm test              # Node test runner under src/**/__tests__
+      - run: npm run build         # production webpack → dist/
+      - uses: azure/setup-helm@v4
+      - run: npm run helm:lint     # chart/rbac-overview
+      - run: npm run helm:template # render manifests (catches template errors)

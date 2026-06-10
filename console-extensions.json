@@ -1,0 +1,32 @@
+[
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/rbac-overview",
+      "component": { "$codeRef": "RbacOverviewPage" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "rbac-overview",
+      "perspective": "admin",
+      "section": "usermanagement",
+      "insertBefore": "users",
+      "name": "%plugin__rbac-overview~RBAC Overview%",
+      "href": "/rbac-overview"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "rbac-overview-dev",
+      "perspective": "dev",
+      "section": "userManagement",
+      "insertBefore": "users",
+      "name": "%plugin__rbac-overview~RBAC Overview%",
+      "href": "/rbac-overview"
+    }
+  }
+]

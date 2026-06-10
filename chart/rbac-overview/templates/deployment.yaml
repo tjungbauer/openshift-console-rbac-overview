@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "rbac-overview.name" . }}
+  namespace: {{ include "rbac-overview.namespace" . }}
+  labels:
+    {{- include "rbac-overview.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "rbac-overview.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "rbac-overview.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ include "rbac-overview.name" . }}
+          image: {{ include "rbac-overview.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ .Values.service.port }}
+              scheme: HTTPS
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ .Values.service.port }}
+              scheme: HTTPS
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: {{ .Values.service.port }}
+              scheme: HTTPS
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: rbac-overview-cert
+              readOnly: true
+              mountPath: /var/cert
+            - name: plugin-config
+              readOnly: true
+              mountPath: /usr/share/nginx/html/plugin-config.json
+              subPath: plugin-config.json
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: rbac-overview-cert
+          secret:
+            secretName: {{ .Values.service.servingCertSecretName }}
+            defaultMode: 420
+        - name: plugin-config
+          configMap:
+            name: {{ include "rbac-overview.name" . }}
+            defaultMode: 420
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}

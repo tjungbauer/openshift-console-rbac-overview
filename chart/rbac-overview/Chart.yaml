@@ -1,0 +1,23 @@
+apiVersion: v2
+name: rbac-overview
+description: Deploy the OpenShift Console RBAC Overview dynamic plugin
+type: application
+version: 1.0.5
+appVersion: "1.0.5"
+kubeVersion: ">=1.23.0-0"
+home: https://github.com/tjungbauer/openshift-console-rbac-overview
+sources:
+  - https://github.com/tjungbauer/openshift-console-rbac-overview
+keywords:
+  - openshift
+  - console
+  - rbac
+  - plugin
+maintainers:
+  - name: tjungbauer
+    url: https://blog.stderr.at/
+annotations:
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial public release 1.0.5 — plugin image and Helm chart aligned

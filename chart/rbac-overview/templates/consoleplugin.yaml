@@ -1,0 +1,17 @@
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: {{ .Values.consolePlugin.name }}
+  labels:
+    {{- include "rbac-overview.labels" . | nindent 4 }}
+spec:
+  displayName: {{ .Values.consolePlugin.displayName | quote }}
+  i18n:
+    loadType: {{ .Values.consolePlugin.i18nLoadType }}
+  backend:
+    type: Service
+    service:
+      name: {{ include "rbac-overview.name" . }}
+      namespace: {{ include "rbac-overview.namespace" . }}
+      port: {{ .Values.service.port }}
+      basePath: /

@@ -1,0 +1,31 @@
+RBAC Overview console plugin installed.
+
+Namespace:  {{ include "rbac-overview.namespace" . }}
+Image:      {{ include "rbac-overview.image" . }}
+
+1. Wait for the deployment to become ready:
+
+   oc -n {{ include "rbac-overview.namespace" . }} rollout status deploy/{{ include "rbac-overview.name" . }}
+
+{{- if .Values.enableConsolePlugin.enabled }}
+
+2. The Helm post-install hook enables the plugin on console.operator cluster.
+   Check the hook job if the console does not show the plugin yet:
+
+   oc -n {{ .Values.enableConsolePlugin.jobNamespace }} get jobs -l app.kubernetes.io/instance={{ .Release.Name }}
+
+{{- else }}
+
+2. Enable the plugin on the cluster:
+
+   oc patch console.operator cluster --type=json \
+     -p='[{"op":"add","path":"/spec/plugins/-","value":"{{ .Values.consolePlugin.name }}"}]'
+
+{{- end }}
+
+3. Open the console (Administrator perspective → User Management → RBAC Overview).
+
+Override sensitive roles via values:
+
+   helm upgrade {{ .Release.Name }} ./chart/rbac-overview \
+     --set pluginConfig.sensitiveRoles={cluster-admin,admin,custom-role}

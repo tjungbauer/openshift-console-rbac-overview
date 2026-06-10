@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rbac-overview.name" . }}
+  namespace: {{ include "rbac-overview.namespace" . }}
+  labels:
+    {{- include "rbac-overview.labels" . | nindent 4 }}
+data:
+  plugin-config.json: |
+{{- include "rbac-overview.pluginConfig" . | nindent 4 }}

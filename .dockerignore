@@ -1,0 +1,19 @@
+# Reduce build context. dist/ is required — run npm run build before podman build.
+node_modules
+.git
+.github
+src
+scripts
+locales
+config
+console-extensions.json
+webpack.config.ts
+tsconfig.json
+package.json
+package-lock.json
+*.md
+chart/rbac-overview/templates
+chart/rbac-overview/values.yaml
+chart/rbac-overview/Chart.yaml
+chart/rbac-overview/README.md
+chart/rbac-overview/.helmignore
